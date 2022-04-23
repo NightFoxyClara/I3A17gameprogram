@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+	#info {
+		position: absolute;
+		top: 10px; width: 100%;
+		
+		padding: 5px;
+		text-align: center;
+		font-size: 20px;
+		color: #ffff00
+	} 
+	body {
+		overflow: hidden
+  }
+</style>
+
+
+</head>
+
+<body>
+
+<div id='info'> Minecraft Steve <br> 
+<button id='switchgod'>God Perspective</button>
+<button id='switch1'>First Perspective</button>
+<button id='switch3'>Third Perspective</button>
+</div>
+<script src="https://threejs.org/build/three.min.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<script>
+var renderer, scene, camera, clock;
+var theta = 0;
+var cameraHelper
+var Radius = 24; 
+var camera3rd, use3rd = 2;
+var turn = false
+var pose1 = {
+	lThigh: Math.PI/6,
+    rThigh: -Math.PI/6
+}
+var pose2 = {
+	lThigh: -Math.PI/6,
+    rThigh: Math.PI/6
+}
+var keys = [
+  [0, pose1],
+  [0.5, pose2],
+  [1, pose1]
+];
+
+var T = 1;
+var clock = new THREE.Clock();
+var ts = clock.getElapsedTime();
+
+function keyframe(t) {
+  var s = ((t - ts) % T) / T;
+
+  for (var i = 1; i < keys.length; i++) {
+    if (keys[i][0] > s) break;
+  }
+  // take i-1
+  var ii = i - 1;
+  var a = (s - keys[ii][0]) / (keys[ii + 1][0] - keys[ii][0]);
+  intKey = [keys[ii][1].lThigh * (1 - a) + keys[ii + 1][1].lThigh * a,
+            keys[ii][1].rThigh * (1 - a) + keys[ii + 1][1].rThigh * a
+  ];
+	return intKey;
+}
+
+$('#switchgod').click ( function () {
+	use3rd = 2;
+})
+$('#switch1').click ( function () {
+	use3rd = 1;
+})
+$('#switch3').click ( function () {
+	use3rd = 3;
+})
+
+init();
+animate();
+
+
+function buildPart(colorName = 'white') {
+  let torso = new THREE.Object3D();
+  let normalMat = new THREE.MeshPhongMaterial({
+    color: colorName,
+    transparent: true,
+    opacity: 0.64
+  });
+  let torsoMesh = new THREE.Mesh(new THREE.BoxGeometry(4, 6, 2), normalMat)
+  torso.add(torsoMesh)
+  torsoMesh.position.y = 8.5
+  /*let axis = new THREE.AxesHelper(5)
+  torso.add(axis)*/
+  let upperArm = new THREE.Object3D()
+  let upperArmMesh = new THREE.Mesh(new THREE.BoxGeometry(2, 6, 2), normalMat)
+  upperArmMesh.position.x = -6
+  upperArmMesh.position.y = -3
+  upperArm.add(upperArmMesh)
+  /*upperArm.add(new THREE.AxesHelper(5))*/
+  let upperArmb = new THREE.Object3D()
+  upperArmb.copy(upperArm)
+  let leg = new THREE.Object3D()
+  let legMesh = new THREE.Mesh(new THREE.BoxGeometry(2, 6, 2), normalMat)
+  leg.add(legMesh)
+  legMesh.position.x = -6
+  legMesh.position.y = -3
+  let legb = new THREE.Object3D()
+  legb.copy(leg)
+  let head = new THREE.Object3D()
+  let headMesh = new THREE.Mesh(new THREE.BoxGeometry(4, 4, 4), normalMat)
+  head.add(headMesh)
+
+  return [torso, upperArm, upperArmb, leg, legb, head];
+}
+
+function onWindowResize() {
+  var width = window.innerWidth;
+  var height = window.innerHeight;
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
+  renderer.setSize(width, height);
+}
+
+function makeCameraHelper() {
+  var cameraModel = new THREE.Group();
+  var body = new THREE.Mesh (new THREE.BoxGeometry(1,1,1), new THREE.MeshNormalMaterial());
+  cameraModel.add (body);
+  return cameraModel;
+}
+
+function init () {
+	clock = new THREE.Clock();
+	scene = new THREE.Scene();
+	
+	renderer = new THREE.WebGLRenderer();
+	renderer.setSize(window.innerWidth, window.innerHeight);
+	renderer.setClearColor(0x888888);
+	document.body.appendChild(renderer.domElement);
+
+	camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 10000);
+	camera.position.set (50,40,0);
+	camera3rd = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 1, 1000);
+	camera1st = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 1, 1000);
+	let controls = new THREE.OrbitControls(camera, renderer.domElement);
+	document.body.appendChild(renderer.domElement);
+	////////////////////////////////////////////////////////////////
+	var loader = new THREE.TextureLoader();
+	loader.setCrossOrigin('');
+	texture = loader.load ('https://i.imgur.com/iXT1VbF.png');
+	
+	
+	var floor = new THREE.Mesh (new THREE.PlaneGeometry(100,100), new THREE.MeshPhongMaterial({color:0x4F4F4F,side:THREE.DoubleSide}));
+	floor.rotation.x = -Math.PI/2;
+	scene.add(floor);
+  
+	pointlight = new THREE.PointLight(0xFFFFFF, 1);
+	pointlight.position.set(0, 20, 0);
+	scene.add( pointlight );
+
+	parts = buildPart();
+
+	scene.add(parts[0]);
+	parts[0].add(parts[1]);
+	parts[1].position.set(3, 11.5, 0);
+	parts[0].add(parts[2]);
+	parts[2].position.set(9, 11.5, 0);
+	parts[0].add(parts[3]);
+	parts[3].position.set(5, 5.5, 0);
+	parts[0].add(parts[4]);
+	parts[4].position.set(7, 5.5, 0);
+	parts[0].add(parts[5]);
+	parts[5].position.set(0, 13.5, 0);
+	
+	cameraHelper3rd = makeCameraHelper();
+    scene.add (cameraHelper3rd);
+	cameraHelper1st = makeCameraHelper();
+	scene.add (cameraHelper1st);
+}
+
+
+
+
+function animate() {
+
+  var dt = clock.getDelta();
+  
+  if(turn==false){
+  Radius=24
+  let omega = 6/Radius/1; 
+  theta += omega*dt; 
+  parts[0].position.set (-Radius*Math.sin(theta), 0.5, -Radius*Math.cos(theta));
+  parts[0].rotation.y = 1.5*Math.PI + theta;
+  if(theta>2*Math.PI) {turn=true; theta = 0;}
+  }
+  if(turn==true){
+  Radius=8
+  let omega = 6/Radius/1; 
+  theta += omega*dt; 
+  parts[0].position.set (-Radius*Math.sin(theta), 0.5, Radius*Math.cos(theta)-Radius-Radius*3);
+  parts[0].rotation.y =  1.5*Math.PI - theta;
+  if(theta>2*Math.PI) {turn=false; theta = 0;}
+  }
+  
+  let intKey = keyframe(clock.getElapsedTime());
+  parts[1].rotation.x=intKey[1]
+  parts[2].rotation.x=intKey[0]
+  parts[3].rotation.x=intKey[0]
+  parts[4].rotation.x=intKey[1]
+  
+  requestAnimationFrame(animate);
+  var thirdPos = parts[5].localToWorld (new THREE.Vector3(0,10,-20));
+  var thirdAt = parts[5].localToWorld (new THREE.Vector3(0,0,60));
+  camera3rd.position.copy (thirdPos);
+  camera3rd.lookAt (thirdAt);
+  var firstPos = parts[5].localToWorld (new THREE.Vector3(0,0,0));
+  var firstAt = parts[5].localToWorld (new THREE.Vector3(0,0,60));
+  camera1st.position.copy (firstPos);
+  camera1st.lookAt (firstAt);
+  cameraHelper3rd.position.copy (camera3rd.position);
+  cameraHelper3rd.quaternion.copy (camera3rd.quaternion);
+  cameraHelper1st.position.copy (camera1st.position);
+  cameraHelper1st.quaternion.copy (camera1st.quaternion);
+   
+  if (use3rd==2)
+		renderer.render (scene, camera);
+  else if(use3rd==1)
+		renderer.render (scene, camera1st);
+  else if(use3rd==3)
+		renderer.render (scene, camera3rd);
+	
+	
+}
+function render() {
+	
+	renderer.render(scene, camera);
+	
+}
+</script>
+</body>
+
+</html>
