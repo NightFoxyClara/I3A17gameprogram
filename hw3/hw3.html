@@ -38,13 +38,8 @@ var cameraGyro;
 var keyboard = new KeyboardState();
 var speed, angle, vel;
 var pos = new THREE.Vector3();
-var theta = 0;
 var cameraHelper
-var Radius = 24; 
 var camera3rd, use3rd = 4;
-var sign=1
-var omega =6/24/1
-var turn = false
 var T = 1;
 var clock = new THREE.Clock();
 var ts = clock.getElapsedTime();
@@ -963,28 +958,28 @@ function buildPart(texture) {
   head.add(headMesh)
   
   let headarmor = new THREE.Object3D()
-  let headarmorMesh = buildHeadArmor(4,4,4,texture)
+  let headarmorMesh = buildHeadArmor(4.25,4.25,4.25,texture)
   headarmor.add(headarmorMesh)
   let bodyarmor = new THREE.Object3D()
-  let bodyarmorMesh = buildBodyArmor(4,6,2,texture)
+  let bodyarmorMesh = buildBodyArmor(4.25,6.25,2.25,texture)
   bodyarmor.add(bodyarmorMesh)
   let upperArmarmor = new THREE.Object3D()
-  let upperArmarmorMesh = buildArm1Armor(2,6,2,texture)
+  let upperArmarmorMesh = buildArm1Armor(2.25,6.25,2.25,texture)
   upperArmarmorMesh.position.x = -6
   upperArmarmorMesh.position.y = -3
   upperArmarmor.add(upperArmarmorMesh)
   let upperArmbarmor = new THREE.Object3D()
-  let upperArmbarmorMesh = buildArm2Armor(2,6,2,texture)
+  let upperArmbarmorMesh = buildArm2Armor(2.25,6.25,2.25,texture)
   upperArmbarmorMesh.position.x = -6
   upperArmbarmorMesh.position.y = -3
   upperArmbarmor.add(upperArmbarmorMesh)
   let legarmor = new THREE.Object3D()
-  let legarmorMesh = buildLeg1Armor(2,6,2,texture)
+  let legarmorMesh = buildLeg1Armor(2.25,6.25,2.25,texture)
   legarmor.add(legarmorMesh)
   legarmorMesh.position.x = -6
   legarmorMesh.position.y = -3
   let legbarmor = new THREE.Object3D()
-  let legbarmorMesh = buildLeg2Armor(2,6,2,texture)
+  let legbarmorMesh = buildLeg2Armor(2.25,6.25,2.25,texture)
   legbarmor.add(legbarmorMesh)
   legbarmorMesh.position.x = -6
   legbarmorMesh.position.y = -3
@@ -1118,7 +1113,7 @@ function update(dt) {
 		angle -= 0.025;                      
 	if ( keyboard.pressed("down") |  keyboard.pressed("S") )  
 		speed -= 5;    
-
+	
 	speed = Math.clamp (speed, 0, 100.0);		//(速度, 最低達到速, 最高達到速)
 	vel = new THREE.Vector3(0,0,speed);
 	
@@ -1133,6 +1128,7 @@ function animate() {
   calcPose(Math.PI/6)
   parts[0].position.copy(pos);
   parts[0].rotation.y = angle;
+
   if (speed > 0.1) {
 	let intKey = keyframe(clock.getElapsedTime());
 	parts[1].rotation.x=intKey[1]
