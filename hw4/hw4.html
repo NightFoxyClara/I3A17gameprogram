@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+	#info {
+		position: absolute;
+		top: 10px; width: 100%;
+		
+		padding: 5px;
+		text-align: center;
+		font-size: 20px;
+		color: #ffff00
+	} 
+	body {
+		overflow: hidden
+  }
+</style>
+
+
+</head>
+
+<body id = body>
+
+<div id='info'> OBJ loader, NPC Steering  <br> 
+<button id='switchgod'>God Perspective</button>
+<button id='switch1'>First Perspective</button>
+<button id='switch3'>Third Perspective</button>
+<button id='switchgyro'>Gyro Camera</button><br>
+<button id='switchlight'>turn off the lights</button>
+</div>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="https://jyunming-chen.github.io/tutsplus/js/KeyboardState.js"></script>
+<script type="module">
+
+import {init, animate} from "./js/main.js"
+init(body);
+animate();
+
+</script>
+</body>
+
+</html>
