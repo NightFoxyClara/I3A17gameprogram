@@ -1,5 +1,5 @@
-import * as THREE from 'http://cdn.skypack.dev/three@0.136';
-import { OrbitControls } from 'http://cdn.skypack.dev/three@0.136/examples/jsm/controls/OrbitControls.js';
+import * as THREE from 'https://cdn.skypack.dev/three@0.136';
+import { OrbitControls } from 'https://cdn.skypack.dev/three@0.136/examples/jsm/controls/OrbitControls.js';
 import { Gyroscope } from "https://cdn.skypack.dev/three@0.136/examples/jsm/misc/Gyroscope.js";
 import { MTLLoader } from 'https://cdn.skypack.dev/three@0.136/examples/jsm/loaders/MTLLoader.js';
 import { OBJLoader } from 'https://cdn.skypack.dev/three@0.136/examples/jsm/loaders/OBJLoader.js';
