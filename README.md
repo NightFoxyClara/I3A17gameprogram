@@ -5,6 +5,7 @@
 ##hw2 Character Animation
 ##hw3 Applying Character Animation
 ##hw4 OBJ loader, NPC Steering 
+##hw5 Inverse Kinematics (IK) using CCD
 
 
 *email:susi8911@gmail.com 
